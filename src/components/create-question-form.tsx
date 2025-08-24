@@ -22,12 +22,15 @@ import {
   type CreateQuestionFormData,
   createQuestionSchema,
 } from "@/http/schemas/create-question"
+import { useCreateQuestion } from "@/http/use-create-question"
 
 type CreateQuestionFormProps = {
   roomId: string
 }
 
 export function CreateQuestionForm({ roomId }: CreateQuestionFormProps) {
+  const { mutateAsync: createQuestion } = useCreateQuestion(roomId)
+
   const form = useForm<CreateQuestionFormData>({
     resolver: zodResolver(createQuestionSchema),
     defaultValues: {
@@ -35,9 +38,8 @@ export function CreateQuestionForm({ roomId }: CreateQuestionFormProps) {
     },
   })
 
-  const handleCreateQuestion = (data: CreateQuestionFormData) => {
-    // biome-ignore lint/suspicious/noConsole: dev
-    console.log(data, roomId)
+  const handleCreateQuestion = async (data: CreateQuestionFormData) => {
+    await createQuestion(data)
   }
 
   return (
